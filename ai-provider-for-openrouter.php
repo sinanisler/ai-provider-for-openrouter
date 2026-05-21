@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace WordPress\OpenRouterAiProvider;
 
 use WordPress\AiClient\AiClient;
+use WordPress\OpenRouterAiProvider\Admin\SettingsPage;
 use WordPress\OpenRouterAiProvider\Provider\OpenRouterProvider;
 
 if (!defined('ABSPATH')) {
@@ -51,3 +52,7 @@ function register_provider(): void
 }
 
 add_action('init', __NAMESPACE__ . '\\register_provider', 5);
+
+if (is_admin()) {
+    SettingsPage::register();
+}

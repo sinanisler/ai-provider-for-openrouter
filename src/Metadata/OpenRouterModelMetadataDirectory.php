@@ -96,11 +96,26 @@ class OpenRouterModelMetadataDirectory extends AbstractApiBasedModelMetadataDire
             throw ResponseException::fromMissingData('OpenRouter', 'data');
         }
 
+        $selectedModelId = (string) get_option('openrouter_ai_default_model', '');
+
         $modelsMetadata = [];
         foreach ($responseData['data'] as $model) {
+            if ($selectedModelId !== '' && ($model['id'] ?? '') !== $selectedModelId) {
+                continue;
+            }
             $modelMetadata = $this->parseModelToMetadata($model);
             if (null !== $modelMetadata) {
                 $modelsMetadata[] = $modelMetadata;
+            }
+        }
+
+        // Fall back to all models if the selected model wasn't found in the response.
+        if ($selectedModelId !== '' && empty($modelsMetadata)) {
+            foreach ($responseData['data'] as $model) {
+                $modelMetadata = $this->parseModelToMetadata($model);
+                if (null !== $modelMetadata) {
+                    $modelsMetadata[] = $modelMetadata;
+                }
             }
         }
 
