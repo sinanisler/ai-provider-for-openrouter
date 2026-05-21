@@ -27,7 +27,16 @@ if (!defined('ABSPATH')) {
     return;
 }
 
-require_once __DIR__ . '/src/autoload.php';
+$autoload = __DIR__ . '/src/autoload.php';
+
+if (!file_exists($autoload)) {
+    add_action('admin_notices', static function (): void {
+        echo '<div class="notice notice-error"><p><strong>AI Provider for OpenRouter:</strong> The <code>src/</code> directory is missing. Please re-upload the full plugin.</p></div>';
+    });
+    return;
+}
+
+require_once $autoload;
 
 /**
  * Registers the AI Provider for OpenRouter with the AI Client.
